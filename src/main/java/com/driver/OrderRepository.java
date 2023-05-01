@@ -7,12 +7,12 @@ import java.util.*;
 @Repository
 public class OrderRepository {
 
-    Map<String, Order> orderMap = new HashMap<>(); // orderId, Order
-    Map<String, DeliveryPartner> deliveryPartnerMap = new HashMap<>(); // partnerId, Partner
+    HashMap<String, Order> orderMap = new HashMap<>(); // orderId, Order
+    HashMap<String, DeliveryPartner> deliveryPartnerMap = new HashMap<>(); // partnerId, Partner
 
-    Map<String, List<String>> partnerOrderMap = new HashMap<>(); // partnerId, List<orderId>
+    HashMap<String, List<String>> partnerOrderMap = new HashMap<>(); // partnerId, List<orderId>
 
-    Set<String> unassignedOrdersSet = new HashSet<>(); // orderId unassigned to delivery partners
+    HashSet<String> unassignedOrdersSet = new HashSet<>(); // orderId unassigned to delivery partners
     public String addOrder(Order order) {
 
         String key = order.getId();
@@ -129,7 +129,7 @@ public class OrderRepository {
 
     public String getLastDeliveryTimeByPartnerId(String partnerId) {
 
-        List<String> orders = getOrdersByPartnerId(partnerId);
+        List<String> orders = partnerOrderMap.getOrDefault(partnerId, new ArrayList<>());
         int lastOrderTime = 0;
 
         for (String orderId : orders) {
@@ -145,11 +145,22 @@ public class OrderRepository {
         int mins = lastOrderTime - (hours * 60);
 
         String time = "";
+        String min = "";
+        String hr = "";
 
         if (hours < 10) {
-            time = "0" + hours;
+            hr = "0" + hours;
+        }else {
+            hr = "" + hours;
         }
-        return time + ":" + mins;
+
+        if (mins < 10) {
+            min = "0" + mins;
+        }else {
+            min = "" + mins;
+        }
+
+        return hr + ":" + min;
     }
 
     public void deletePartnerById(String partnerId) {
